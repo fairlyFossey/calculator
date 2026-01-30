@@ -105,20 +105,32 @@ function operate(firstNum, operator, secondNum) {
 };
 
 function add(a, b) {
-    return a + b;
+    let result = a + b;
+    return trim(result);
 };
 
 function subtract(a, b) {
-    return a - b;
+    let result = a - b;
+    return trim(result);
 };
 
 function multiply(a, b) {
-    return a * b;
+    let result = a * b;
+    return trim(result);
 };
 
 function divide(a, b) {
-    return (a == 0 || b == 0) ? 0 : (a / b);
+    let result = (a == 0 || b == 0) ? 0 : (a / b);
+    return trim(result);
 };
+
+function trim(number, length = 10) {
+    let arr = Array.from(String(number));
+    // check first digit after cutoff, and trim accordingly
+    if (arr[length] >= 5) arr[(length - 1)]++; 
+    arr.splice(length);
+    return Number(arr.join(""));
+}
 
 
 function isEmpty(str) {

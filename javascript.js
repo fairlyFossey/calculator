@@ -3,13 +3,12 @@ let secondNum = "";
 let operator = "";
 let operationCompleted = false;
 
-let tiles = {
+const tiles = {
     add: document.querySelector("#add"),
     subtract: document.querySelector("#subtract"),
     multiply: document.querySelector("#multiply"),
     divide: document.querySelector("#divide"),
 }
-
 
 const display = document.querySelector("#displaySpan");
 const btns = document.querySelectorAll(".btn");
@@ -20,23 +19,19 @@ btns.forEach((button) => {
 });
 
 
-
 function evaluateInput(input) {
-    // if AC pressed or OperationCompleted true: clear all variables, wipe display, and exit function (if AC)
-    if (input == "ac" || (operationCompleted == true && isNumber(input))) {
+    if (input == "ac" || (operationCompleted && isNumber(input))) {
         resetValues();
         if (input == "ac") return;
     };
-    // if secondNum has value, call operate()
-    // we check this early in function so using operators as pseudo-equals button 
+
+    // check secondNum for value early so using operators as pseudo-equals button 
     // doesn't result in endless loop
     if (hasValue(secondNum)) {
         let result = operate(Number(firstNum), operator, Number(secondNum));
         
         if (input == "equals") {          
-            // write result to display
             display.textContent = result;
-            // unshade selected operator
             setTilesTo("white");
             operationCompleted = true;
         };
@@ -49,29 +44,26 @@ function evaluateInput(input) {
             operator = input;
         };
     };
-    // if operator is undefined, write/concatenate number inputs to firstNum
+
     if (isEmpty(operator) && isNumber(input)) {
         firstNum += input;
-        // write to display
         display.textContent = firstNum;
         return;
     };
-    // if firstNum has a value, write operator inputs to operator variable
+
     if (hasValue(firstNum) && isOperator(input)) {
         operator = input;
-        // shade selected operator, resetting any previously shaded operators
         setTilesTo("white");
         tiles[input].style.backgroundColor = "DarkSeaGreen";
         return;
     };
-    // if operator has value, then number inputs are stored/concatenate to secondNum
-        // also check if secondNum has value so that 
+
     if (hasValue(operator) && isNumber(input)) {
         secondNum += input;
-        // display switches to displaying secondNum
         display.textContent = secondNum;
     };
 ;}
+
 
 function resetValues() {
     firstNum = "";
@@ -86,24 +78,6 @@ function setTilesTo(str) {
     for (const tile in tiles) {
             tiles[tile].style.backgroundColor = str;
         }
-};
-
-function isEmpty(str) {
-    return (str == "");
-};
-
-function isNumber(str) {
-    return (Number(str) >= 0);
-};
-
-function hasValue(str) {
-    return (str != "");
-};
-
-function isOperator(str) {
-    if (str == "add" || str == "subtract" || str == "multiply" || str == "divide") {
-        return true;
-    }
 };
 
 
@@ -144,4 +118,23 @@ function multiply(a, b) {
 
 function divide(a, b) {
     return (a == 0 || b == 0) ? 0 : (a / b);
+};
+
+
+function isEmpty(str) {
+    return (str == "");
+};
+
+function isNumber(str) {
+    return (Number(str) >= 0);
+};
+
+function hasValue(str) {
+    return (str != "");
+};
+
+function isOperator(str) {
+    if (str == "add" || str == "subtract" || str == "multiply" || str == "divide") {
+        return true;
+    }
 };

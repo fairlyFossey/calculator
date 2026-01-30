@@ -1,5 +1,11 @@
-let firstNum = "";
-let secondNum = "";
+let first = {
+    num: "",
+    hasDecimal: false,
+};
+let second = {
+    num: "",
+    hasDecimal: false,
+};
 let operator = "";
 let operationCompleted = false;
 
@@ -20,15 +26,15 @@ btns.forEach((button) => {
 
 
 function evaluateInput(input) {
-    if (input == "ac" || (operationCompleted && isNumber(input))) {
+    if (input == "ac" || (operationCompleted && isNumberChar(input))) {
         resetValues();
         if (input == "ac") return;
     };
 
-    // check secondNum for value early so using operators as pseudo-equals button 
+    // check second.num for value early so using operators as pseudo-equals button 
     // doesn't result in endless loop
-    if (hasValue(secondNum)) {
-        let result = operate(Number(firstNum), operator, Number(secondNum));
+    if (hasValue(second.num)) {
+        let result = operate(Number(first.num), operator, Number(second.num));
         
         if (input == "equals") {          
             display.textContent = result;
@@ -40,34 +46,46 @@ function evaluateInput(input) {
         if (isOperator(input)) {
             resetValues();
             display.textContent = result;
-            firstNum = result;
+            first.num = result;
             operator = input;
         };
     };
 
-    if (isEmpty(operator) && isNumber(input)) {
-        firstNum += input;
-        display.textContent = firstNum;
+    if (isEmpty(operator) && isNumberChar(input)) {
+        if (input == "." && first.hasDecimal) {
+            return;
+        } else if (input == ".") {
+            first.hasDecimal = true;
+        }
+        first.num += input;
+        display.textContent = first.num;
         return;
     };
 
-    if (hasValue(firstNum) && isOperator(input)) {
+    if (hasValue(first.num) && isOperator(input)) {
         operator = input;
         setTilesTo("white");
         tiles[input].style.backgroundColor = "DarkSeaGreen";
         return;
     };
 
-    if (hasValue(operator) && isNumber(input)) {
-        secondNum += input;
-        display.textContent = secondNum;
+    if (hasValue(operator) && isNumberChar(input)) {
+        if (input == "." && second.hasDecimal) {
+            return;
+        } else if (input == ".") {
+            second.hasDecimal = true;
+        }
+        second.num += input;
+        display.textContent = second.num;
     };
 ;}
 
 
 function resetValues() {
-    firstNum = "";
-    secondNum = "";
+    first.num = "";
+    second.num = "";
+    first.hasDecimal = false;
+    second.hasDecimal = false;
     operator = "";
     operationCompleted = false;
     display.textContent = "";
@@ -137,8 +155,8 @@ function isEmpty(str) {
     return (str == "");
 };
 
-function isNumber(str) {
-    return (Number(str) >= 0);
+function isNumberChar(str) {
+    return (Number(str) >= 0 || str == ".");
 };
 
 function hasValue(str) {

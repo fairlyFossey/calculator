@@ -5,7 +5,7 @@ You can learn about the assignment [here](https://www.theodinproject.com/lessons
 
 ### Roadmap
 - ✅ ~~Rounding for results with many numbers after a decimal~~
-- Working decimal button for your own operations
+- ✅ ~~Working decimal button for your own operations~~
 - Backspace button
 - Keyboard support
 - Find [El Dorado](https://en.wikipedia.org/wiki/El_Dorado)

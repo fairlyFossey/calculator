@@ -8,6 +8,7 @@ let second = {
 };
 let operator = "";
 let operationCompleted = false;
+let maxDisplayChars = 10;
 
 const tiles = {
     add: document.querySelector("#add"),
@@ -57,7 +58,7 @@ function evaluateInput(input) {
         } else if (input == ".") {
             first.hasDecimal = true;
         }
-        first.num += input;
+        if (first.num.length < maxDisplayChars) first.num += input;
         display.textContent = first.num;
         return;
     };
@@ -75,7 +76,7 @@ function evaluateInput(input) {
         } else if (input == ".") {
             second.hasDecimal = true;
         }
-        second.num += input;
+        if (second.num.length < maxDisplayChars) second.num += input;
         display.textContent = second.num;
     };
 ;}
@@ -142,7 +143,7 @@ function divide(a, b) {
     return trim(result);
 };
 
-function trim(number, length = 10) {
+function trim(number, length = maxDisplayChars) {
     let arr = Array.from(String(number));
     // check first digit after cutoff, and trim accordingly
     if (arr[length] >= 5) arr[(length - 1)]++; 

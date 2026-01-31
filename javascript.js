@@ -64,6 +64,7 @@ function getResultOf(input) {
             display.textContent = result;
             operandA.value = result;
             operator.value = input;
+            setTileColors(input);
         } else if (isPopulated(operandA.value)) {
                 operator.value = input;
                 setTileColors(input);

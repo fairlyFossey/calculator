@@ -12,5 +12,5 @@ You can learn about the assignment [here](https://www.theodinproject.com/lessons
 
 ### Known bugs
 - Pressing any operator after triggering easter egg writes 'NaN' into memory
-- Operator buttons pressed after completed operations are not getting highlighted
+- ~~Operator buttons pressed after completed operations are not getting highlighted~~
 - ~~Inputs of 13 characters start to overflow display~~

@@ -1,6 +1,10 @@
-let operandA = { value: "", isInteger: true, };
-let operandB = { value: "", isInteger: true, };
-let operator = "";
+const operandA = { value: "", isInteger: true, };
+const operandB = { value: "", isInteger: true, };
+const operator = {
+    value: "",
+    symbols: ["+", "-", "*", "/"],
+    descriptors: ["add", "subtract", "multiply", "divide"]
+};
 let operationCompleted = false;
 let maxDisplayChars = 10;
 
@@ -10,7 +14,8 @@ const tiles = {
     subtract: document.querySelector("#subtract"),
     multiply: document.querySelector("#multiply"),
     divide: document.querySelector("#divide"),
-}
+};
+
 const btns = document.querySelectorAll(".btn");
 btns.forEach((button) => {
     button.addEventListener("click", () => {
@@ -18,9 +23,15 @@ btns.forEach((button) => {
     });
 });
 
+document.addEventListener("keydown", (event) => {
+    let input = translateInput(event.key);
+    getResultOf(input);
+    
+});
+
 
 function getResultOf(input) {
-    let result = operate(operandA.value, operator, operandB.value);
+    let result = operate(operandA.value, operator.value, operandB.value);
 
     if (input == "ac") {
         resetValues();
@@ -37,7 +48,7 @@ function getResultOf(input) {
     if (isNumber(input)) {
         if (operationCompleted) resetValues();
  
-        if (isEmpty(operator)) {
+        if (isEmpty(operator.value)) {
             append(input, operandA);
             display.textContent = operandA.value;
         } else {
@@ -52,21 +63,19 @@ function getResultOf(input) {
             resetValues();
             display.textContent = result;
             operandA.value = result;
-            operator = input;
-        }
-        else if (isPopulated(operandA.value)) {
-                operator = input;
+            operator.value = input;
+        } else if (isPopulated(operandA.value)) {
+                operator.value = input;
                 setTileColors(input);
         }
     }
 
     if (input == "decimal") {
-        if (isEmpty(operator) && operandA.isInteger) {
+        if (isEmpty(operator.value) && operandA.isInteger) {
             append(".", operandA);
             display.textContent = operandA.value;
             operandA.isInteger = false;
-        }
-        else if (isPopulated(operator) && operandB.isInteger) {
+        } else if (isPopulated(operator.value) && operandB.isInteger) {
             append(".", operandB);
             display.textContent = operandB.value;
             operandB.isInteger = false;
@@ -75,15 +84,13 @@ function getResultOf(input) {
 
 
     if (input == "backspace" ) {
-        if (isEmpty(operator) && isPopulated(operandA.value)) {
+        if (isEmpty(operator.value) && isPopulated(operandA.value)) {
             operandA.value = removeLastCharFrom(operandA.value);
             display.textContent = operandA.value;
-        } 
-        else if (isPopulated(operator) && isEmpty(operandB.value)) {
-            operator = "";
+        } else if (isPopulated(operator.value) && isEmpty(operandB.value)) {
+            operator.value = "";
             setTileColors();
-        }
-        else if (isPopulated(operandB.value) && operationCompleted == false) {
+        } else if (isPopulated(operandB.value) && operationCompleted == false) {
               operandB.value = removeLastCharFrom(operandB.value);
               display.textContent = operandB.value;  
         }
@@ -91,12 +98,31 @@ function getResultOf(input) {
 };
 
 
+function translateInput(input) {
+    if (isOperator(input)) {
+        return getDescriptor(input);
+    } else if (input == "=" || input == "Enter" ) {
+        return "equals";
+    } else if (input == "Delete") {
+        return "ac";
+    } else if (input == ".") {
+        return "decimal";
+    } else {
+        return input.toLowerCase();
+    }
+};
+
+function getDescriptor(str) {
+    let i = operator.symbols.findIndex(item => item == str);
+    return operator.descriptors[i];
+};
+
 function resetValues() {
     operandA.value = "";
     operandB.value = "";
     operandA.isInteger = true;
     operandB.isInteger = true;
-    operator = "";
+    operator.value = "";
     operationCompleted = false;
     display.textContent = "";
     setTileColors();
@@ -106,7 +132,7 @@ function setTileColors(str = "") {
     for (const tile in tiles) {
         tiles[tile].style.backgroundColor = "white";
     }
-    if (isPopulated(str)) {
+    if (str != "") {
         tiles[str].style.backgroundColor = "DarkSeaGreen";
     }
 };
@@ -122,7 +148,8 @@ function removeLastCharFrom(str) {
     let indexToRemove = (arr.length - 1);
     arr.splice(indexToRemove);
     return arr.join("");
-}
+};
+
 
 function operate(str, operator, otherStr) {
     let firstNum = Number(str);
@@ -131,22 +158,18 @@ function operate(str, operator, otherStr) {
     switch (operator) {
         case "add":
             return add(firstNum, secondNum);
-            break;
         case "subtract":
             return subtract(firstNum, secondNum);
-            break;
         case "multiply":
             return multiply(firstNum, secondNum);
-            break;
         case "divide":
             if (divide(firstNum, secondNum) == 0) {
                 return "Congrats, now you get nothing.";
              } else { 
                 return divide(firstNum, secondNum);
              }
-            break;
         default:
-            break;
+            return;
     }
 };
 
@@ -192,7 +215,9 @@ function isPopulated(str) {
 };
 
 function isOperator(str) {
-    if (str == "add" || str == "subtract" || str == "multiply" || str == "divide") {
-        return true;
+    for (let i = 0; i < operator.descriptors.length; i++) {
+        if (str == operator.descriptors[i] || str == operator.symbols[i]) {
+            return true;
+        }
     }
 };

@@ -7,10 +7,10 @@ You can learn about the assignment [here](https://www.theodinproject.com/lessons
 - ✅ ~~Rounding for results with many numbers after a decimal~~
 - ✅ ~~Working decimal button for your own operations~~
 - ✅ ~~Backspace button~~
-- Keyboard support
+- ✅ ~~Keyboard support~~
 - Find [El Dorado](https://en.wikipedia.org/wiki/El_Dorado)
 
 ### Known bugs
 - Pressing any operator after triggering easter egg writes 'NaN' into memory
 - Operator buttons pressed after completed operations are not getting highlighted
-- ✅ ~~Inputs of 13 characters start to overflow display~~
+- ~~Inputs of 13 characters start to overflow display~~

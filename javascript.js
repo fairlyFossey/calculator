@@ -1,10 +1,8 @@
-let first = { num: "", isInteger: true, };
-let second = { num: "", isInteger: true, };
+let operandA = { value: "", isInteger: true, };
+let operandB = { value: "", isInteger: true, };
 let operator = "";
 let operationCompleted = false;
 let maxDisplayChars = 10;
-
-console.log(operate(Number(first.num), operator, Number(second.num)));
 
 const display = document.querySelector("#display");
 const tiles = {
@@ -22,14 +20,14 @@ btns.forEach((button) => {
 
 
 function getResultOf(input) {
-    let result = operate(Number(first.num), operator, Number(second.num));
+    let result = operate(operandA.value, operator, operandB.value);
 
     if (input == "ac") {
         resetValues();
     }
 
     if (input == "equals") {
-        if (hasValue(second.num)) {
+        if (hasValue(operandB.value)) {
             display.textContent = result;
             setTileColors();
             operationCompleted = true;
@@ -37,76 +35,67 @@ function getResultOf(input) {
     }
 
     if (isNumber(input)) {
-        if (operationCompleted) {
-            resetValues();
-        }
-        
+        if (operationCompleted) resetValues();
+ 
         if (isEmpty(operator)) {
-            if (isValidLength(first.num)) {
-                first.num += input;
-                display.textContent = first.num;
-            }
-        }
-        else if (isValidLength(second.num)) {
-            second.num += input;
-            display.textContent = second.num;
+            append(input, operandA);
+            display.textContent = operandA.value;
+        } else {
+            append(input, operandB);
+            display.textContent = operandB.value;
             setTileColors();
         }
     }
 
     if (isOperator(input)) {
-        if (hasValue(second.num)) {
+        if (hasValue(operandB.value)) {
             resetValues();
             display.textContent = result;
-            first.num = result;
+            operandA.value = result;
             operator = input;
         }
-        else if (hasValue(first.num)) {
+        else if (hasValue(operandA.value)) {
                 operator = input;
                 setTileColors(input);
         }
     }
 
     if (input == "decimal") {
-        if (isEmpty(operator) && first.isInteger) {
-            if (isValidLength(first.num)) {
-                first.num += ".";
-                display.textContent = first.num;
-                first.isInteger = false;
-            }
+        if (isEmpty(operator) && operandA.isInteger) {
+            append(".", operandA);
+            display.textContent = operandA.value;
+            operandA.isInteger = false;
         }
-        else if (hasValue(operator) && second.isInteger) {
-            if (isValidLength(second.num)) {
-                second.num += ".";
-                display.textContent = second.num;
-                second.isInteger = false;
-            }
+        else if (hasValue(operator) && operandB.isInteger) {
+            append(".", operandB);
+            display.textContent = operandB.value;
+            operandB.isInteger = false;
         }
     }
 
 
-    if (input == "backspace") {
-        if (isEmpty(operator) && hasValue(first.num)) {
-            first.num = removeLastCharFrom(first.num);
-            display.textContent = first.num;
+    if (input == "backspace" ) {
+        if (isEmpty(operator) && hasValue(operandA.value)) {
+            operandA.value = removeLastCharFrom(operandA.value);
+            display.textContent = operandA.value;
         } 
-        else if (hasValue(operator) && isEmpty(second.num)) {
+        else if (hasValue(operator) && isEmpty(operandB.value)) {
             operator = "";
             setTileColors();
         }
-        else if (hasValue(second.num)) {
-              second.num = removeLastCharFrom(second.num);
-              display.textContent = second.num;  
+        else if (hasValue(operandB.value) && operationCompleted == false) {
+              operandB.value = removeLastCharFrom(operandB.value);
+              display.textContent = operandB.value;  
         }
     }
 };
 
 
 function resetValues() {
-    first.num = "";
-    second.num = "";
-    first.isInteger = true;
-    second.isInteger = true;
+    operandA.value = "";
+    operandB.value = "";
+    operandA.isInteger = true;
+    operandB.isInteger = true;
     operator = "";
     operationCompleted = false;
     display.textContent = "";
@@ -122,8 +111,10 @@ function setTileColors(str = "") {
     }
 };
 
-function isValidLength(str) {
-    return (str.length < maxDisplayChars) 
+function append(input, obj) {
+    if (obj.value.length < maxDisplayChars) {
+        obj.value += input;
+    }
 };
 
 function removeLastCharFrom(str) {
@@ -133,7 +124,10 @@ function removeLastCharFrom(str) {
     return arr.join("");
 }
 
-function operate(firstNum, operator, secondNum) {
+function operate(str, operator, otherStr) {
+    let firstNum = Number(str);
+    let secondNum = Number(otherStr);
+
     switch (operator) {
         case "add":
             return add(firstNum, secondNum);
@@ -178,7 +172,7 @@ function divide(a, b) {
 
 function trim(number) {
     let arr = Array.from(String(number));
-    // check first digit after cutoff to determine how to round number 
+    // check digit after cutoff to determine how to round number 
     if (arr[maxDisplayChars] >= 5) arr[(maxDisplayChars - 1)]++; 
     arr.splice(maxDisplayChars);
     return Number(arr.join(""));

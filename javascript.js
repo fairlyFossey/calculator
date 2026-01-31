@@ -4,6 +4,8 @@ let operator = "";
 let operationCompleted = false;
 let maxDisplayChars = 10;
 
+console.log(operate(Number(first.num), operator, Number(second.num)));
+
 const display = document.querySelector("#display");
 const tiles = {
     add: document.querySelector("#add"),
@@ -20,13 +22,14 @@ btns.forEach((button) => {
 
 
 function getResultOf(input) {
+    let result = operate(Number(first.num), operator, Number(second.num));
+
     if (input == "ac") {
         resetValues();
     }
 
     if (input == "equals") {
         if (hasValue(second.num)) {
-            let result = operate(Number(first.num), operator, Number(second.num));
             display.textContent = result;
             setTileColors();
             operationCompleted = true;
@@ -44,47 +47,56 @@ function getResultOf(input) {
                 display.textContent = first.num;
             }
         }
-        else {
-            if (isValidLength(second.num)) {
-                second.num += input;
-                display.textContent = second.num;
-                setTileColors();
-            }
+        else if (isValidLength(second.num)) {
+            second.num += input;
+            display.textContent = second.num;
+            setTileColors();
         }
     }
 
     if (isOperator(input)) {
         if (hasValue(second.num)) {
-            let result = operate(Number(first.num), operator, Number(second.num));
             resetValues();
             display.textContent = result;
             first.num = result;
             operator = input;
         }
-        else {
-            if (hasValue(first.num)) {
+        else if (hasValue(first.num)) {
                 operator = input;
-                setTileColors(input)
-            }
+                setTileColors(input);
         }
     }
 
     if (input == "decimal") {
         if (isEmpty(operator) && first.isInteger) {
-           if (isValidLength(first.num)) {
-            first.num += ".";
-            display.textContent = first.num;
-            first.isInteger = false;
-           }
-        }
-        else {
-            if (hasValue(operator) && second.isInteger) {
-                if (isValidLength(second.num)) {
-                    second.num += ".";
-                    display.textContent = second.num;
-                    second.isInteger = false;
-                }
+            if (isValidLength(first.num)) {
+                first.num += ".";
+                display.textContent = first.num;
+                first.isInteger = false;
             }
+        }
+        else if (hasValue(operator) && second.isInteger) {
+            if (isValidLength(second.num)) {
+                second.num += ".";
+                display.textContent = second.num;
+                second.isInteger = false;
+            }
+        }
+    }
+
+
+    if (input == "backspace") {
+        if (isEmpty(operator) && hasValue(first.num)) {
+            first.num = removeLastCharFrom(first.num);
+            display.textContent = first.num;
+        } 
+        else if (hasValue(operator) && isEmpty(second.num)) {
+            operator = "";
+            setTileColors();
+        }
+        else if (hasValue(second.num)) {
+              second.num = removeLastCharFrom(second.num);
+              display.textContent = second.num;  
         }
     }
 };
@@ -114,6 +126,12 @@ function isValidLength(str) {
     return (str.length < maxDisplayChars) 
 };
 
+function removeLastCharFrom(str) {
+    let arr = Array.from(str);
+    let indexToRemove = (arr.length - 1);
+    arr.splice(indexToRemove);
+    return arr.join("");
+}
 
 function operate(firstNum, operator, secondNum) {
     switch (operator) {
@@ -134,7 +152,7 @@ function operate(firstNum, operator, secondNum) {
              }
             break;
         default:
-            console.log("An unexpected string was used as an operator in operate()");
+            break;
     }
 };
 
